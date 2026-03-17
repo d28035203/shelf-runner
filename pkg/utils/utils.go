@@ -1,3 +1,4 @@
+// Package utils provides small shared helpers for HTTP handlers.
 package utils
 
 import (
@@ -6,7 +7,8 @@ import (
 	"net/http"
 )
 
-// ParseBody decodes a JSON request body into dest.
+// ParseBody reads the entire request body and unmarshals JSON into dest.
+// Callers should pass a pointer to the target struct.
 func ParseBody(r *http.Request, dest interface{}) error {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {

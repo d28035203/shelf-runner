@@ -1,4 +1,4 @@
-module github.com/d28035203/scaling-waddle
+module github.com/d28035203/shelf-runner
 
 go 1.23.2
 

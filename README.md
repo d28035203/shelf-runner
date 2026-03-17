@@ -1,4 +1,4 @@
-# Scaling Waddle
+# Shelf Runner
 
 Bookstore REST API written in Go. Clean package layout, MySQL via GORM, Gorilla Mux routing, and environment-based configuration.
 
@@ -23,7 +23,7 @@ Bookstore REST API written in Go. Clean package layout, MySQL via GORM, Gorilla 
 ## Project Structure
 
 ```
-scaling-waddle/
+shelf-runner/
 ├── cmd/main/main.go
 ├── pkg/
 │   ├── config/app.go
@@ -59,8 +59,8 @@ curl -X POST http://localhost:9010/book/ \
 ## Setup
 
 ```bash
-git clone https://github.com/d28035203/scaling-waddle.git
-cd scaling-waddle
+git clone https://github.com/d28035203/shelf-runner.git
+cd shelf-runner
 cp .env.example .env
 # configure MySQL DSN
 go mod tidy

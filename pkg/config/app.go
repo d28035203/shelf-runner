@@ -1,3 +1,4 @@
+// Package config owns the shared MySQL connection used by the models layer.
 package config
 
 import (
@@ -10,9 +11,11 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+// db is the package-level GORM handle. Models call GetDB() after Connect().
 var db *gorm.DB
 
-// Connect opens a MySQL connection using DB_DSN from the environment.
+// Connect opens a MySQL connection using the DB_DSN environment variable.
+// It fatals on missing DSN or connection failure because the API cannot serve without a database.
 func Connect() {
 	dsn := os.Getenv("DB_DSN")
 	if dsn == "" {
@@ -30,7 +33,7 @@ func Connect() {
 	fmt.Println("connected to MySQL")
 }
 
-// GetDB returns the shared GORM connection.
+// GetDB returns the shared GORM connection (must call Connect first).
 func GetDB() *gorm.DB {
 	return db
 }

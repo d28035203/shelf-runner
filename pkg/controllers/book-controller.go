@@ -1,3 +1,4 @@
+// Package controllers implements HTTP handlers for the bookstore API (controller layer).
 package controllers
 
 import (
@@ -5,28 +6,30 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/d28035203/scaling-waddle/pkg/models"
-	"github.com/d28035203/scaling-waddle/pkg/utils"
+	"github.com/d28035203/shelf-runner/pkg/models"
+	"github.com/d28035203/shelf-runner/pkg/utils"
 	"github.com/gorilla/mux"
 )
 
+// writeJSON sets Content-Type and encodes payload as JSON with the given status.
 func writeJSON(w http.ResponseWriter, status int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_ = json.NewEncoder(w).Encode(payload)
 }
 
+// writeError returns a uniform error object: { "error": "message" }.
 func writeError(w http.ResponseWriter, status int, message string) {
 	writeJSON(w, status, map[string]string{"error": message})
 }
 
-// GetBook lists all books.
+// GetBook lists all books (GET /book/).
 func GetBook(w http.ResponseWriter, r *http.Request) {
 	books := models.GetAllBooks()
 	writeJSON(w, http.StatusOK, books)
 }
 
-// GetBookById returns one book by id.
+// GetBookById returns one book (GET /book/{bookId}).
 func GetBookById(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(mux.Vars(r)["bookId"], 10, 64)
 	if err != nil {
@@ -43,7 +46,8 @@ func GetBookById(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, book)
 }
 
-// CreateBook creates a book from the JSON body.
+// CreateBook creates a book from JSON (POST /book/).
+// Required fields: name, author.
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	book := &models.Book{}
 	if err := utils.ParseBody(r, book); err != nil {
@@ -59,7 +63,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusCreated, created)
 }
 
-// UpdateBook updates fields on an existing book.
+// UpdateBook partially updates name/author/publication (PUT /book/{bookId}).
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
 	payload := &models.Book{}
 	if err := utils.ParseBody(r, payload); err != nil {
@@ -79,6 +83,7 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Only overwrite fields that the client actually sent (non-empty strings).
 	if payload.Name != "" {
 		book.Name = payload.Name
 	}
@@ -97,7 +102,7 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, book)
 }
 
-// DeleteBook deletes a book by id.
+// DeleteBook removes a book by id (DELETE /book/{bookId}).
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(mux.Vars(r)["bookId"], 10, 64)
 	if err != nil {
